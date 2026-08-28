@@ -516,14 +516,6 @@
 
         const triggerMoreServices = async () => {
           try {
-            if (
-              typeof liff === "undefined" ||
-              !liff.isInClient() ||
-              !liff.isApiAvailable("sendMessages")
-            ) {
-              throw new Error("LIFF sendMessages unavailable");
-            }
-
             await liff.sendMessages([
               {
                 type: "text",
