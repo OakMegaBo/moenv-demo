@@ -245,23 +245,37 @@
       .bound-links {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 10px;
+        height: 140px;
+        min-height: 0;
       }
 
       .bound-link {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        flex: 0 0 40px;
         width: 100%;
-        padding: 4px 16px;
+        height: 40px;
+        max-height: 40px;
+        padding: 0 16px;
         border: none;
         border-radius: 12px;
         appearance: none;
         -webkit-appearance: none;
         font-weight: 600;
-        font-size: 22px;
+        font-size: 20px;
+        line-height: 1.2;
         color: #ffffff;
         text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
         background: #81c638;
         cursor: pointer;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
 
       .bound-link:hover {
