@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>&#8203;</title>
+
+    <script src="https://scrm.oakmega.site/0/js/vue3.prod.js"></script>
+    <script src="https://scrm.oakmega.site/0/js/axios.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+
+    <style>
+      :root {
+        --color-primary: #2f7d4a;
+        --color-background: #f5f7f6;
+        --color-surface: #ffffff;
+        --color-text: #1f2923;
+        --color-text-muted: #68736c;
+        --color-danger: #c83e3e;
+        --radius-card: 12px;
+        --page-padding: 16px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: transparent;
+        color: var(--color-text);
+        font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+          "PingFang TC", "Microsoft JhengHei", sans-serif;
+        line-height: 1.5;
+        letter-spacing: 8%;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      [v-cloak] {
+        display: none;
+      }
+
+      #app,
+      .app-shell {
+        min-height: 100dvh;
+      }
+
+      .app-shell {
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        padding: var(--page-padding);
+        padding-bottom: calc(var(--page-padding) + env(safe-area-inset-bottom));
+        background: linear-gradient(
+          139.66deg,
+          #b0d0a8 -26.05%,
+          #f3fff0 26.81%,
+          #def8d7 75.68%,
+          #b0d0a8 119.19%
+        );
+      }
+
+      .page-content {
+        width: 100%;
+        flex: 1;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: center;
+        position: relative;
+        margin: 0 0 24px;
+        font-size: 0;
+        font-weight: 400;
+      }
+
+      .page-header__logo {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 28px;
+        height: 19px;
+      }
+
+      .page-header__hero {
+        display: block;
+        width: 286px;
+        height: 136px;
+      }
+
+      .intro-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .intro-text {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 300;
+        text-align: center;
+      }
+
+      .unbound-member {
+        margin: 0 auto 16px;
+        width: fit-content;
+        padding: 8px 16px;
+        font-size: 22px;
+        font-weight: 500;
+        text-align: center;
+        color: #727272;
+        background: #ffffff;
+        border-radius: 999px;
+      }
+
+      .promo-image {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+
+      .bound-member {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+
+      .bound-member p {
+        margin: 0;
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 400;
+        color: #727272;
+        background: #ffffff;
+        border-radius: 16px;
+      }
+
+      .bind-button {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        margin-top: 16px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 4px 8px;
+        border: none;
+        border-radius: 8px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #ffffff;
+        text-align: center;
+        background: #68c550;
+        cursor: pointer;
+      }
+
+      .bind-button:hover {
+        background: #003d21;
+      }
+
+      .bind-button__label {
+        position: relative;
+        display: inline-block;
+      }
+
+      .bind-button__arrow-wrap {
+        position: absolute;
+        left: calc(100% + 16px);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        pointer-events: none;
+      }
+
+      .bind-button__arrow {
+        position: absolute;
+        inset: 0;
+        width: 28px;
+        height: 28px;
+        object-fit: fill;
+      }
+
+      .bind-button__arrow--hover {
+        opacity: 0;
+      }
+
+      .bind-button:hover .bind-button__arrow:not(.bind-button__arrow--hover) {
+        opacity: 0;
+      }
+
+      .bind-button:hover .bind-button__arrow--hover {
+        opacity: 1;
+      }
+
+      .bound-grid {
+        display: grid;
+        grid-template-columns: 140px 140px;
+        grid-template-rows: 140px 140px;
+        gap: 16px;
+        width: 100%;
+        max-width: 296px;
+        margin: 16px auto 0;
+      }
+
+      .bound-grid img {
+        display: block;
+        width: 140px;
+        height: 140px;
+      }
+
+      .bound-tile {
+        display: block;
+        width: 140px;
+        height: 140px;
+        padding: 0;
+        border: none;
+        background: transparent;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+      }
+
+      .bound-links {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .bound-link {
+        display: block;
+        width: 100%;
+        padding: 4px 16px;
+        border: none;
+        border-radius: 12px;
+        appearance: none;
+        -webkit-appearance: none;
+        font-weight: 600;
+        font-size: 22px;
+        color: #ffffff;
+        text-align: center;
+        background: #81c638;
+        cursor: pointer;
+      }
+
+      .bound-link:hover {
+        background: #1b8229;
+      }
+
+      .bound-button {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        margin-top: 16px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 4px 8px;
+        border: none;
+        border-radius: 8px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #1b8229;
+        text-align: center;
+        background: #fcf998;
+        cursor: pointer;
+      }
+
+      .bound-button:hover {
+        color: #ffffff;
+        background: #81c638;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="app" v-cloak>
+      <main class="app-shell">
+        <section class="page-content">
+          <!-- 在這裡加入主要畫面內容 -->
+          <h1 class="page-header">
+            <img
+              class="page-header__logo"
+              width="28"
+              height="19"
+              src="https://scrm.oakmega.site/752/2608/26/image/RzIjxFx4.png"
+              alt="Green Point"
+            />
+            <img
+              class="page-header__hero"
+              width="286"
+              height="136"
+              src="https://scrm.oakmega.site/752/2608/26/image/RSXq32ut.png"
+              alt="歡迎使用環保集點"
+            />
+          </h1>
+          <!-- 未綁定 -->
+          <div v-if="!isBound">
+            <h2 class="unbound-member">您尚未綁定／註冊環保集點會員</h2>
+            <div class="promo-image">
+              <img
+                width="345"
+                height="191"
+                src="https://scrm.oakmega.site/752/2608/26/image/fJPZNvYI.png"
+                alt="輕鬆集免費換"
+              />
+            </div>
+            <h3 class="intro-title">日常環保就能集點！</h3>
+            <p class="intro-text">
+              不論購買環保產品、搭乘大眾<br>運輸或參與環保行動，<br>
+              都能化為「環保綠點」獲得實質回饋，<br>實踐綠色消費。
+            </p>
+            <button
+              class="bind-button"
+              type="button"
+              @click="openInLineIab(links.bind)"
+            >
+              <span class="bind-button__label">
+                前往綁定／註冊
+                <span class="bind-button__arrow-wrap" aria-hidden="true">
+                  <img
+                    class="bind-button__arrow"
+                    src="https://scrm.oakmega.site/752/2608/07/imagemap/16KkQ80R/1040"
+                    alt=""
+                  />
+                  <img
+                    class="bind-button__arrow bind-button__arrow--hover"
+                    src="https://scrm.oakmega.site/752/2608/07/imagemap/iGRtZxBc/1040"
+                    alt=""
+                  />
+                </span>
+              </span>
+            </button>
+          </div>
+          <!-- 已綁定 -->
+          <div v-else>
+            <div class="bound-member">
+              <img
+                width="78"
+                height="68"
+                src="https://scrm.oakmega.site/752/2608/07/imagemap/P0wgcm7d/1040"
+                alt="綠寶"
+              />
+              <p>
+                <span>帳號：{{ accountId }}</span>
+                <br />
+                <span>點數：{{ formattedPoints }} 點</span>
+              </p>
+            </div>
+            <div class="bound-grid">
+              <button
+                class="bound-tile"
+                type="button"
+                @click="openGreenPointService(links.dailySignIn)"
+              >
+                <img
+                  width="140"
+                  height="140"
+                  src="https://scrm.oakmega.site/752/2608/26/imagemap/At9VGZbB/1040"
+                  alt="每日簽到"
+                />
+              </button>
+              <button
+                class="bound-tile"
+                type="button"
+                @click="openGreenPointService(links.redeem)"
+              >
+                <img
+                  width="140"
+                  height="140"
+                  src="https://scrm.oakmega.site/752/2608/26/imagemap/YZah9d3F/1040"
+                  alt="綠點兌換"
+                />
+              </button>
+              <button
+                class="bound-tile"
+                type="button"
+                @click="openGreenPointService(links.pointHistory)"
+              >
+                <img
+                  width="140"
+                  height="140"
+                  src="https://scrm.oakmega.site/752/2608/26/imagemap/jmsekJVH/1040"
+                  alt="點數歷程"
+                />
+              </button>
+              <div class="bound-links">
+                <button
+                  class="bound-link"
+                  type="button"
+                  @click="openGreenPointService(links.addCarrier)"
+                >
+                  新增載具
+                </button>
+                <button
+                  class="bound-link"
+                  type="button"
+                  @click="openGreenPointService(links.memberBarcode)"
+                >
+                  會員條碼
+                </button>
+                <button
+                  class="bound-link"
+                  type="button"
+                  @click="openGreenPointService(links.detective)"
+                >
+                  集點偵探
+                </button>
+              </div>
+            </div>
+            <button
+              class="bound-button"
+              type="button"
+              @click="triggerMoreServices"
+            >
+              探索更多服務
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+   
+    // const BASE_URL = 'https://enterprise.oakmega.ai';  // 正式環境
+    const BASE_URL = 'https://oakmega-pro-dev-618520745124.asia-east1.run.app'; // 測試環境
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const api = axios.create({
+          baseURL: BASE_URL,
+          timeout: 10000,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const { createApp, computed, ref } = Vue;
+
+        const LIFF_ID = "2006770392-pRdbJWRg";
+        const MORE_SERVICES_TRIGGER_TEXT = "環保集點 - 探索更多服務";
+
+        const links = {
+          bind: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/LineOAuth/Bind.aspx",
+          dailySignIn:
+            "https://sys.greenpoint.org.tw/GpConsumerApp/Function/DailySignIn/RootList.aspx",
+          redeem: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/Commodity4OnlineMgt/RootList.aspx",
+          pointHistory: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/TradeVehicleList/RootList.aspx",
+          addCarrier: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/CombinedVehicleAccountMgt/DeviceList.aspx",
+          memberBarcode: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/MemberCenter/Center.aspx",
+          detective: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/CarbonBook/RootList.aspx",
+          moreServices: "",
+        };
+
+        const openInLineIab = (url) => {
+          if (!url) return;
+
+          if (typeof liff !== "undefined" && liff.isInClient()) {
+            liff.openWindow({
+              url,
+              external: false,
+            });
+            return;
+          }
+
+          window.location.href = url;
+        };
+
+        const openGreenPointService = async (url) => {
+          try {
+            const accessToken = liff.getAccessToken();
+            if (!accessToken) {
+              throw new Error("LINE access token unavailable");
+            }
+
+            const { data } = await api.get(
+              "/api/v1/moenv/get_member_token",
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+
+            if (data?.result !== true || !data.member_token) {
+              throw new Error("Member token unavailable");
+            }
+
+            const destinationUrl = new URL(url);
+            destinationUrl.searchParams.set("member_token", data.member_token);
+            openInLineIab(destinationUrl.toString());
+          } catch (error) {
+            console.error("取得環保集點轉拋 token 失敗");
+          }
+        };
+
+        const triggerMoreServices = async () => {
+          try {
+            if (
+              typeof liff === "undefined" ||
+              !liff.isInClient() ||
+              !liff.isApiAvailable("sendMessages")
+            ) {
+              throw new Error("LIFF sendMessages unavailable");
+            }
+
+            await liff.sendMessages([
+              {
+                type: "text",
+                text: MORE_SERVICES_TRIGGER_TEXT,
+              },
+            ]);
+
+            liff.closeWindow();
+          } catch (error) {
+            console.error("發送探索更多服務訊息失敗");
+          }
+        };
+
+        const mountApp = () => {
+          createApp({
+            setup() {
+              const isBound = ref(false);
+              const accountId = ref("");
+              const totalPoints = ref("0");
+
+              const formattedPoints = computed(() => {
+                const points = Number(totalPoints.value);
+                return Number.isFinite(points)
+                  ? points.toLocaleString("zh-TW")
+                  : totalPoints.value;
+              });
+
+              const loadPointsMember = async () => {
+                try {
+                  if (typeof liff === "undefined") {
+                    throw new Error("LIFF SDK unavailable");
+                  }
+
+                  if (!liff.isInClient() && !liff.isLoggedIn()) {
+                    liff.login({ redirectUri: window.location.href });
+                    return;
+                  }
+
+                  const accessToken = liff.getAccessToken();
+                  if (!accessToken) {
+                    throw new Error("LINE access token unavailable");
+                  }
+
+                  // Demo：暫停 check_points_member，維持預設未綁定
+                  // const { data } = await api.get(
+                  //   "/api/v1/moenv/check_points_member",
+                  //   {
+                  //     headers: {
+                  //       Authorization: `Bearer ${accessToken}`,
+                  //     },
+                  //   }
+                  // );
+                  //
+                  // isBound.value = data?.is_points_member === true;
+                  // accountId.value = isBound.value ? data.account_id ?? "" : "";
+                  // totalPoints.value = isBound.value ? data.total_points ?? "0" : "0";
+                } catch (error) {
+                  console.error("LIFF 初始化或取得 LINE access token 失敗");
+                }
+              };
+
+              loadPointsMember();
+
+              return {
+                isBound,
+                accountId,
+                formattedPoints,
+                loadPointsMember,
+                links,
+                openInLineIab,
+                openGreenPointService,
+                triggerMoreServices,
+              };
+            },
+          }).mount("#app");
+        };
+
+        const start = () => {
+          if (typeof liff === "undefined") {
+            mountApp();
+            return;
+          }
+
+          liff
+            .init({ liffId: LIFF_ID })
+            .then(mountApp)
+            .catch((err) => {
+              console.log(err);
+              mountApp();
+            });
+        };
+
+        start();
+      });
+    </script>
+  </body>
+</html>
