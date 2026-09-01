@@ -506,25 +506,24 @@
               throw new Error("LINE access token unavailable");
             }
 
-            // Demo：暫停 get_member_token，query 仍帶空值
-            // const { data } = await api.get(
-            //   "/api/v1/moenv/get_member_token",
-            //   {
-            //     headers: {
-            //       Authorization: `Bearer ${accessToken}`,
-            //     },
-            //   }
-            // );
-            //
-            // if (data?.result !== true || !data.member_token) {
-            //   throw new Error("Member token unavailable");
-            // }
+            const { data } = await api.get(
+              "/api/v1/moenv/get_member_token",
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+
+            if (data?.result !== true || !data.member_token) {
+              throw new Error("Member token unavailable");
+            }
 
             const destinationUrl = new URL(url);
-            destinationUrl.searchParams.set("member_token", "");
+            destinationUrl.searchParams.set("member_token", data.member_token);
             openInLineIab(destinationUrl.toString());
           } catch (error) {
-            console.error("開啟環保集點服務失敗");
+            console.error("取得環保集點轉拋 token 失敗");
           }
         };
 
