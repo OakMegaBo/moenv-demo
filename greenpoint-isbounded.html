@@ -473,6 +473,7 @@
 
         const LIFF_ID = "2006770392-W452hJD6";
         const MORE_SERVICES_TRIGGER_TEXT = "環保集點 - 探索更多服務";
+        let lineUserId = "";
 
         const links = {
           bind: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/LineOAuth/Bind.aspx",
@@ -501,19 +502,13 @@
 
         const openGreenPointService = async (url) => {
           try {
-            const accessToken = liff.getAccessToken();
-            if (!accessToken) {
-              throw new Error("LINE access token unavailable");
+            if (!lineUserId) {
+              throw new Error("LINE userId unavailable");
             }
 
-            const { data } = await api.get(
-              "/api/v1/moenv/get_member_token",
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            );
+            const { data } = await api.get("/api/v1/moenv/get_member_token", {
+              params: { line_user_id: lineUserId },
+            });
 
             if (data?.result !== true || !data.member_token) {
               throw new Error("Member token unavailable");
@@ -558,27 +553,15 @@
 
               const loadPointsMember = async () => {
                 try {
-                  if (typeof liff === "undefined") {
-                    throw new Error("LIFF SDK unavailable");
-                  }
-
-                  if (!liff.isInClient() && !liff.isLoggedIn()) {
-                    liff.login({ redirectUri: window.location.href });
-                    return;
-                  }
-
-                  const accessToken = liff.getAccessToken();
-                  if (!accessToken) {
-                    throw new Error("LINE access token unavailable");
+                  if (!lineUserId) {
+                    throw new Error("LINE userId unavailable");
                   }
 
                   // Demo：暫停 check_points_member，維持預設已綁定與假資料
                   // const { data } = await api.get(
                   //   "/api/v1/moenv/check_points_member",
                   //   {
-                  //     headers: {
-                  //       Authorization: `Bearer ${accessToken}`,
-                  //     },
+                  //     params: { line_user_id: lineUserId },
                   //   }
                   // );
                   //
@@ -586,7 +569,7 @@
                   // accountId.value = isBound.value ? data.account_id ?? "" : "";
                   // totalPoints.value = isBound.value ? data.total_points ?? "0" : "0";
                 } catch (error) {
-                  console.error("LIFF 初始化或取得 LINE access token 失敗");
+                  console.error("查詢環保集點會員資料失敗");
                 }
               };
 
@@ -614,7 +597,16 @@
 
           liff
             .init({ liffId: LIFF_ID })
-            .then(mountApp)
+            .then(async () => {
+              if (!liff.isInClient() && !liff.isLoggedIn()) {
+                liff.login({ redirectUri: window.location.href });
+                return;
+              }
+
+              const profile = await liff.getProfile();
+              lineUserId = profile.userId ?? "";
+              mountApp();
+            })
             .catch((err) => {
               console.log(err);
               mountApp();
