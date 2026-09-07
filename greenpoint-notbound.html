@@ -216,24 +216,23 @@
 
       .bound-grid {
         display: grid;
-        grid-template-columns: 140px 140px;
-        grid-template-rows: 140px 140px;
+        grid-template-columns: repeat(3, 113px);
         gap: 16px;
-        width: 100%;
-        max-width: 296px;
+        width: 371px;
+        max-width: 100%;
         margin: 16px auto 0;
       }
 
       .bound-grid img {
         display: block;
-        width: 140px;
-        height: 140px;
+        width: 113px;
+        height: 113px;
       }
 
       .bound-tile {
         display: block;
-        width: 140px;
-        height: 140px;
+        width: 113px;
+        height: 113px;
         padding: 0;
         border: none;
         background: transparent;
@@ -243,12 +242,14 @@
       }
 
       .bound-links {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        gap: 10px;
-        height: 140px;
-        min-height: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 140px);
+        grid-template-rows: repeat(3, 40px);
+        column-gap: 44px;
+        row-gap: 10px;
+        width: 324px;
+        max-width: 100%;
+        margin: 16px auto 0;
       }
 
       .bound-link {
@@ -389,8 +390,8 @@
                 @click="openGreenPointService(links.dailySignIn)"
               >
                 <img
-                  width="140"
-                  height="140"
+                  width="113"
+                  height="113"
                   src="https://scrm.oakmega.site/752/2608/26/imagemap/At9VGZbB/1040"
                   alt="每日簽到"
                 />
@@ -401,8 +402,8 @@
                 @click="openGreenPointService(links.redeem)"
               >
                 <img
-                  width="140"
-                  height="140"
+                  width="113"
+                  height="113"
                   src="https://scrm.oakmega.site/752/2608/26/imagemap/YZah9d3F/1040"
                   alt="綠點兌換"
                 />
@@ -410,38 +411,35 @@
               <button
                 class="bound-tile"
                 type="button"
-                @click="openGreenPointService(links.pointHistory)"
+                @click="openGreenPointService(links.memberBarcode)"
               >
                 <img
-                  width="140"
-                  height="140"
-                  src="https://scrm.oakmega.site/752/2608/26/imagemap/jmsekJVH/1040"
-                  alt="點數歷程"
+                  width="113"
+                  height="113"
+                  src="https://scrm.oakmega.site/752/2609/07/imagemap/87PVautl/1040"
+                  alt="會員條碼"
                 />
               </button>
-              <div class="bound-links">
-                <button
-                  class="bound-link"
-                  type="button"
-                  @click="openGreenPointService(links.addCarrier)"
-                >
-                  新增載具
-                </button>
-                <button
-                  class="bound-link"
-                  type="button"
-                  @click="openGreenPointService(links.memberBarcode)"
-                >
-                  會員條碼
-                </button>
-                <button
-                  class="bound-link"
-                  type="button"
-                  @click="openGreenPointService(links.detective)"
-                >
-                  集點偵探
-                </button>
-              </div>
+            </div>
+            <div class="bound-links">
+              <button class="bound-link" type="button" @click="openGreenPointService(links.detective)">
+                集點偵探
+              </button>
+              <button class="bound-link" type="button" @click="openGreenPointService(links.coupons)">
+                我的票券
+              </button>
+              <button class="bound-link" type="button" @click="openGreenPointService(links.carrierManagement)">
+                載具管理
+              </button>
+              <button class="bound-link" type="button" @click="openGreenPointService(links.pointHistory)">
+                點數歷程
+              </button>
+              <button class="bound-link" type="button" @click="openGreenPointService(links.serialInput)">
+                序號輸入
+              </button>
+              <button class="bound-link" type="button" @click="openGreenPointService(links.memberProfile)">
+                會員資料
+              </button>
             </div>
             <button
               class="bound-button"
@@ -476,14 +474,16 @@
         let lineUserId = "";
 
         const links = {
-          bind: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/LineOAuth/Bind.aspx",
-          dailySignIn:
-            "https://sys.greenpoint.org.tw/GpConsumerApp/Function/DailySignIn/RootList.aspx",
-          redeem: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/Commodity4OnlineMgt/RootList.aspx",
-          pointHistory: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/TradeVehicleList/RootList.aspx",
-          addCarrier: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/CombinedVehicleAccountMgt/DeviceList.aspx",
-          memberBarcode: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/MemberCenter/MemberCardNo.aspx",
-          detective: "https://sys.greenpoint.org.tw/GpConsumerApp/Function/CarbonBook/RootList.aspx",
+          bind: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/LineOAuth/Bind.aspx", // 綁定／註冊
+          dailySignIn: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/DailySignIn/RootList.aspx", // 每日簽到
+          redeem: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/Commodity4OnlineMgt/RootList.aspx", // 綠點兌換
+          memberBarcode: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/MemberCenter/MemberCardNo.aspx", // 會員條碼
+          detective: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/CarbonBook/RootList.aspx", // 集點偵探
+          coupons: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/Commodity4OnlineMgt/RootListMy.aspx", // 我的票券
+          carrierManagement: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/CombinedVehicleAccountMgt/RootList.aspx", // 載具管理
+          pointHistory: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/TradeVehicleList/RootList.aspx", // 點數歷程
+          serialInput: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/QrCodeMgt/Edit.aspx", // 序號輸入
+          memberProfile: "https://web-test.greenpoint.org.tw/GpConsumerApp/Function/CombinedAccountMgt/ResetPassword.aspx", // 會員資料
         };
 
         const openInLineIab = (url) => {
