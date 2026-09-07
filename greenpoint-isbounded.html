@@ -8,7 +8,10 @@
     />
     <title>&#8203;</title>
 
+    <link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css" />
     <script src="https://scrm.oakmega.site/0/js/vue3.prod.js"></script>
+    <script src="https://unpkg.com/primevue@4/umd/primevue.min.js"></script>
+    <script src="https://unpkg.com/@primeuix/themes/umd/lara.js"></script>
     <script src="https://scrm.oakmega.site/0/js/axios.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 
@@ -306,11 +309,36 @@
         background: #81c638;
       }
 
+      .dashboard-api-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        color: var(--color-text);
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+
     </style>
   </head>
 
   <body>
     <div id="app" v-cloak>
+      <p-dialog
+        v-model:visible="isLoading"
+        modal
+        :closable="false"
+        :dismissable-mask="false"
+        :close-on-escape="false"
+        :show-header="false"
+        :style="{ width: '180px', borderRadius: '16px' }"
+        content-style="padding:1.25rem;"
+      >
+        <div class="dashboard-api-loading" role="status" aria-live="polite">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+          <span>載入中…</span>
+        </div>
+      </p-dialog>
       <main class="app-shell">
         <section class="page-content">
           <!-- 在這裡加入主要畫面內容 -->
@@ -538,8 +566,9 @@
         };
 
         const mountApp = () => {
-          createApp({
+          const app = createApp({
             setup() {
+              const isLoading = ref(true);
               const isBound = ref(true);
               const accountId = ref("A123456789");
               const totalPoints = ref("1280");
@@ -557,6 +586,7 @@
                     throw new Error("LINE userId unavailable");
                   }
 
+                  await new Promise((resolve) => setTimeout(resolve, 1000));
                   // Demo：暫停 check_points_member，維持預設已綁定與假資料
                   // const { data } = await api.get(
                   //   "/api/v1/moenv/check_points_member",
@@ -570,12 +600,15 @@
                   // totalPoints.value = isBound.value ? data.total_points ?? "0" : "0";
                 } catch (error) {
                   console.error("查詢環保集點會員資料失敗");
+                } finally {
+                  isLoading.value = false;
                 }
               };
 
               loadPointsMember();
 
               return {
+                isLoading,
                 isBound,
                 accountId,
                 formattedPoints,
@@ -586,7 +619,16 @@
                 triggerMoreServices,
               };
             },
-          }).mount("#app");
+          });
+
+          app.use(PrimeVue.Config, {
+            theme: {
+              preset: PrimeUIX.Themes.Lara,
+              options: { darkModeSelector: false },
+            },
+          });
+          app.component("p-dialog", PrimeVue.Dialog);
+          app.mount("#app");
         };
 
         const start = () => {
