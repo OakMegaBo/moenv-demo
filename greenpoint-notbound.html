@@ -543,7 +543,7 @@
             }
 
             const destinationUrl = new URL(url);
-            destinationUrl.searchParams.set("member_token", data.member_token);
+            destinationUrl.searchParams.set("token", data.member_token);
             openInLineIab(destinationUrl.toString());
           } catch (error) {
             console.error("取得環保集點轉拋 token 失敗");
